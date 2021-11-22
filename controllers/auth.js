@@ -53,27 +53,6 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.getUser = async (req, res) => {
-  try {
-    if (!req.cookies["jwt"])
-      return res.status(401).json({ message: "unauthenticated" });
-
-    const cookie = req.cookies["jwt"];
-
-    const claims = jwt.verify(cookie, process.env.SECRET_KEY);
-
-    if (!claims) return res.status(401).json({ message: "unauthenticated" });
-
-    const user = await User.findOne({ _id: claims._id });
-
-    const { password, ...data } = await user.toJSON();
-
-    res.status(200).json(data);
-  } catch (e) {
-    return res.status(500).json({ message: "something went wrong", error });
-  }
-};
-
 exports.logout = (req, res) => {
   res.cookie("jwt", "", { maxAge: 0 });
 
