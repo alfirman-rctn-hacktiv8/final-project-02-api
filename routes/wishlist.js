@@ -7,6 +7,6 @@ const {
 
 router.get("/", getWishlistItems);
 router.post("/add", addWishlistItem);
-router.post("/remove", removeWishlistItem);
+router.delete("/remove", removeWishlistItem);
 
 module.exports = router;
