@@ -3,6 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const user = require("./routes/user");
+const cart = require("./routes/cart");
 const cors = require("cors");
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 app.use(express.json());
 
 app.use("/user", user);
+app.use("/cart", cart);
 
 mongoose.connect(
   process.env.MONGODB_CONNECTION,

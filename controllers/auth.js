@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
+const Cart = require("../models/cart");
 
 exports.register = async (req, res) => {
   if (!req.body.name || !req.body.password || !req.body.email)
@@ -15,15 +16,20 @@ exports.register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
-    const user = new User({
+    const newUser = new User({
       name: req.body.name,
       email: req.body.email,
       password: hashedPassword,
     });
 
-    const result = await user.save();
+    const result = await newUser.save();
 
     const { password, ...data } = await result.toJSON();
+
+    // add cart
+    const userCart = new Cart({ uid: result._id, items: [] });
+
+    await userCart.save();
 
     res.status(201).json(data);
   } catch (error) {
