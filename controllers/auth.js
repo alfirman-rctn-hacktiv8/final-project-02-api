@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const Cart = require("../models/cart");
+const Wishlist = require("../models/wishlist");
 
 exports.register = async (req, res) => {
   if (!req.body.name || !req.body.password || !req.body.email)
@@ -25,11 +26,12 @@ exports.register = async (req, res) => {
     const result = await newUser.save();
 
     const { password, ...data } = await result.toJSON();
-
-    // add cart
-    const userCart = new Cart({ uid: result._id, items: [] });
+    
+    const userCart = new Cart({ uid: result._id, items: [] }); // cart
+    const userWihslist = new Wishlist({ uid: result._id, items: [] }); // wishlist
 
     await userCart.save();
+    await userWihslist.save();
 
     res.status(201).json(data);
   } catch (error) {
