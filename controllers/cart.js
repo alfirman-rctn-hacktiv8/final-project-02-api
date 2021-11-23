@@ -1,16 +1,11 @@
 const Cart = require("../models/cart");
-const jwt = require("jsonwebtoken");
+const useAuth = require("../lib/useAuth");
 
 exports.getCartItems = async (req, res) => {
   try {
-    if (!req.cookies["jwt"])
-      return res.status(401).json({ message: "unauthenticated" });
+    const { error, claims } = useAuth(req.cookies?.jwt);
 
-    const cookie = req.cookies["jwt"];
-
-    const claims = jwt.verify(cookie, process.env.SECRET_KEY);
-
-    if (!claims) return res.status(401).json({ message: "unauthenticated" });
+    if (error) return res.status(error.status).json({ message: error.message });
 
     const userCart = await Cart.findOne({ uid: claims._id });
 
@@ -24,14 +19,9 @@ exports.addCartItem = async (req, res) => {
   if (!req.body?.item) return res.status(400).json({ message: "bad request" });
 
   try {
-    if (!req.cookies["jwt"])
-      return res.status(401).json({ message: "unauthenticated" });
+    const { error, claims } = useAuth(req.cookies?.jwt);
 
-    const cookie = req.cookies["jwt"];
-
-    const claims = jwt.verify(cookie, process.env.SECRET_KEY);
-
-    if (!claims) return res.status(401).json({ message: "unauthenticated" });
+    if (error) return res.status(error.status).json({ message: error.message });
 
     const userCart = await Cart.findOne({ uid: claims._id });
 
@@ -51,14 +41,9 @@ exports.removeCartItem = async (req, res) => {
   if (!req.body?.item) return res.status(400).json({ message: "bad request" });
 
   try {
-    if (!req.cookies["jwt"])
-      return res.status(401).json({ message: "unauthenticated" });
+    const { error, claims } = useAuth(req.cookies?.jwt);
 
-    const cookie = req.cookies["jwt"];
-
-    const claims = jwt.verify(cookie, process.env.SECRET_KEY);
-
-    if (!claims) return res.status(401).json({ message: "unauthenticated" });
+    if (error) return res.status(error.status).json({ message: error.message });
 
     const userCart = await Cart.findOne({ uid: claims._id });
 
