@@ -4,7 +4,7 @@ exports.addProduct = async (req, res) => {
   const { name, price, category, description, image } = req.body;
 
   if (!name || !price || !category)
-    res.status(400).json({ message: "bad request" });
+    return res.status(400).json({ message: "bad request" });
 
   const newProduct = new Product({
     name,
@@ -39,11 +39,11 @@ exports.getProduct = async (req, res) => {
   const { productId } = req.params;
 
   try {
-    const result = await Product.findById(productId);
+    const product = await Product.findById(productId);
 
-    if (!result) res.status(404).json({ message: "product not found" });
+    if (!product) return res.status(404).json({ message: "product not found" });
 
-    res.status(200).json(result);
+    res.status(200).json(product);
   } catch (error) {
     res.status(500).json({ message: "something went wrong", error });
   }
@@ -54,11 +54,10 @@ exports.updateProduct = async (req, res) => {
 
   const { name, price, category, description, image, stock } = req.body;
 
-  // if (!name || !price || !category || !description || !image || !productId)
-  //   res.status(400).json({ message: "bad request" });
-
   try {
     const product = await Product.findById(productId);
+
+    if (!product) return res.status(404).json({ message: "product not found" });
 
     product.name = name;
     product.price = price;
@@ -69,8 +68,24 @@ exports.updateProduct = async (req, res) => {
 
     const result = await product.save();
 
-    res.status(201).json(result);
+    res.status(200).json(result);
   } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error });
+  }
+};
+
+exports.deleteProduct = async (req, res) => {
+  const { productId } = req.params;
+
+  try {
+    const product = await Product.findById(productId);
+
+    if (!product) return res.status(404).json({ message: "product not found" });
+
+    const deleted = await Product.findOneAndDelete(productId);
+
+    res.status(200).json({ message: "berhasil dihapus", data: deleted });
+  } catch (e) {
     return res.status(500).json({ message: "something went wrong", error });
   }
 };
