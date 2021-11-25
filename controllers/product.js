@@ -26,6 +26,20 @@ exports.addProduct = async (req, res) => {
 exports.getProducts = async (req, res) => {
   try {
     const result = await Product.find();
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: "something went wrong", error });
+  }
+};
+
+exports.getProduct = async (req, res) => {
+  const { productId } = req.params;
+  try {
+    const result = await Product.findById(productId);
+
+    if (!result) res.status(404).json({ message: "product not found" });
+
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ message: "something went wrong", error });
