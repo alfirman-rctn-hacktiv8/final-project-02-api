@@ -1,10 +1,11 @@
 const router = require("express").Router();
+const adminOnly = require("../middleware/adminOnly")
 const { addProduct, updateProduct, getProducts, getProduct, deleteProduct } = require("../controllers/product");
 
 router.get("/", getProducts);
-router.post("/", addProduct);
 router.get("/:productId", getProduct);
-router.put("/:productId", updateProduct);
-router.delete("/:productId", deleteProduct);
+router.post("/", adminOnly, addProduct);
+router.put("/:productId", adminOnly, updateProduct);
+router.delete("/:productId", adminOnly, deleteProduct);
 
 module.exports = router;
