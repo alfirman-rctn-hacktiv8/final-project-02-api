@@ -22,8 +22,4 @@ app.use("/cart", cart);
 app.use("/product", product);
 app.use("/wishlist", wishlist);
 
-mongoose.connect(
-  process.env.MONGODB_CONNECTION,
-  { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true },
-  () => app.listen(PORT, () => console.log(`server is running at port ${PORT}`))
-);
+mongoose.connect( process.env.MONGODB_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true }, () => app.listen(PORT, () => console.log(`server is running at port ${PORT}`)));
