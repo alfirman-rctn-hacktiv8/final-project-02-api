@@ -25,8 +25,10 @@ exports.toggleWishlistItem = async (req, res) => {
 
     const userWishlist = await Wishlist.findOne({ uid: claims._id });
 
-    const itemIndex = userWishlist.items.findIndex((el) => el === req.body.item);
-    
+    const itemIndex = userWishlist.items.findIndex(
+      (el) => el.productId === req.body.item.productId
+    );
+
     itemIndex === -1
       ? userWishlist.items.push(req.body.item)
       : userWishlist.items.splice(itemIndex, 1);

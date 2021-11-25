@@ -44,7 +44,7 @@ exports.addCartItem = async (req, res) => {
 };
 
 exports.removeCartItem = async (req, res) => {
-  if (!req.body.itemId) return res.status(400).json({ message: "bad request" });
+  if (!req.body.productId) return res.status(400).json({ message: "bad request" });
 
   try {
     const { error, claims } = useAuth(req.cookies?.jwt);
@@ -54,7 +54,7 @@ exports.removeCartItem = async (req, res) => {
     const userCart = await Cart.findOne({ uid: claims._id });
 
     const targetIndex = userCart.items.findIndex(
-      (item) => item._id == req.body.itemId
+      (item) => item.productId == req.body.productId
     );
 
     if (targetIndex === -1)
