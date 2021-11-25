@@ -37,7 +37,7 @@ exports.addCartItem = async (req, res) => {
 
     const data = await addedCart.toJSON();
 
-    res.status(200).json(data.items);
+    res.status(201).json(data.items);
   } catch (error) {
     return res.status(500).json({ message: "something went wrong", error });
   }

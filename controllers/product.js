@@ -6,15 +6,19 @@ exports.addProduct = async (req, res) => {
   if (!name || !price || !category)
     res.status(400).json({ message: "bad request" });
 
+  const newProduct = new Product({
+    name,
+    price,
+    category,
+    image: image || "",
+    description: description || "",
+    rating: { rate: 0, count: 0 },
+  });
   try {
-    if (error) return res.status(error.status).json({ message: error.message });
+    const result = await newProduct.save();
 
-    const user = await User.findOne({ _id: claims._id });
-
-    const { password, ...data } = await user.toJSON();
-
-    res.status(200).json(data);
-  } catch (e) {
+    res.status(201).json(result);
+  } catch (error) {
     return res.status(500).json({ message: "something went wrong", error });
   }
 };
