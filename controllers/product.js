@@ -23,31 +23,36 @@ exports.addProduct = async (req, res) => {
   }
 };
 
-// exports.updateUser = async (req, res) => {
-//   const { name, address, number } = req.body;
-//   if (!name || !address || !number)
-//     return res.status(400).json({ message: "bad request" });
+exports.getProducts = async (req, res) => {
+  try {
+    const result = await Product.find();
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: "something went wrong", error });
+  }
+};
 
-//   if (!address.district || !address.city || !address.province)
-//     return res.status(400).json({ message: "bad request" });
+exports.updateProduct = async (req, res) => {
+  const { productId } = req.params;
 
-//   try {
-//     const { error, claims } = useAuth(req.cookies?.jwt);
+  const { name, price, category, description, image } = req.body;
 
-//     if (error) return res.status(error.status).json({ message: error.message });
+  if (!name || !price || !category || !description || !image || !productId)
+    res.status(400).json({ message: "bad request" });
 
-//     const user = await User.findOne({ _id: claims._id });
+  try {
+    const product = await Product.findById(productId);
 
-//     user.name = name;
-//     user.number = number;
-//     user.address = address;
+    product.name = name;
+    product.price = price;
+    product.category = category;
+    product.description = description;
+    product.image = image;
 
-//     const updatedUser = await user.save();
+    const result = await product.save();
 
-//     const { password, ...data } = await updatedUser.toJSON();
-
-//     res.status(200).json(data);
-//   } catch (e) {
-//     return res.status(500).json({ message: "something went wrong", error });
-//   }
-// };
+    res.status(201).json(result);
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error });
+  }
+};
