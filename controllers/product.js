@@ -13,7 +13,9 @@ exports.addProduct = async (req, res) => {
     image: image || "",
     description: description || "",
     rating: { rate: 0, count: 0 },
+    stock: 0,
   });
+
   try {
     const result = await newProduct.save();
 
@@ -35,6 +37,7 @@ exports.getProducts = async (req, res) => {
 
 exports.getProduct = async (req, res) => {
   const { productId } = req.params;
+
   try {
     const result = await Product.findById(productId);
 
@@ -49,10 +52,10 @@ exports.getProduct = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   const { productId } = req.params;
 
-  const { name, price, category, description, image } = req.body;
+  const { name, price, category, description, image, stock } = req.body;
 
-  if (!name || !price || !category || !description || !image || !productId)
-    res.status(400).json({ message: "bad request" });
+  // if (!name || !price || !category || !description || !image || !productId)
+  //   res.status(400).json({ message: "bad request" });
 
   try {
     const product = await Product.findById(productId);
@@ -62,6 +65,7 @@ exports.updateProduct = async (req, res) => {
     product.category = category;
     product.description = description;
     product.image = image;
+    product.stock = stock;
 
     const result = await product.save();
 
