@@ -16,7 +16,7 @@ exports.getCartItems = async (req, res) => {
 };
 
 exports.addCartItem = async (req, res) => {
-  if (!req.body?.item) return res.status(400).json({ message: "bad request" });
+  if (!req.body.item) return res.status(400).json({ message: "bad request" });
 
   try {
     const { error, claims } = useAuth(req.cookies?.jwt);
@@ -25,7 +25,13 @@ exports.addCartItem = async (req, res) => {
 
     const userCart = await Cart.findOne({ uid: claims._id });
 
-    userCart.items.push(req.body.item);
+    const itemIndex = userCart.items.findIndex(
+      (el) => el.productId === req.body.item.productId
+    );
+
+    itemIndex === -1
+      ? userCart.items.push({ ...req.body.item, total: 1 })
+      : userCart.items[itemIndex].total++;
 
     const addedCart = await userCart.save();
 
@@ -38,7 +44,7 @@ exports.addCartItem = async (req, res) => {
 };
 
 exports.removeCartItem = async (req, res) => {
-  if (!req.body?.item) return res.status(400).json({ message: "bad request" });
+  if (!req.body.itemId) return res.status(400).json({ message: "bad request" });
 
   try {
     const { error, claims } = useAuth(req.cookies?.jwt);
@@ -48,14 +54,15 @@ exports.removeCartItem = async (req, res) => {
     const userCart = await Cart.findOne({ uid: claims._id });
 
     const targetIndex = userCart.items.findIndex(
-      (item) => item === req.body.item
+      (item) => item._id == req.body.itemId
     );
 
     if (targetIndex === -1)
       return res.status(404).json({ message: "item not found" });
 
-    userCart.items.splice(targetIndex, 1);
-
+    userCart.items[targetIndex].total === 1
+      ? userCart.items.splice(targetIndex, 1)
+      : userCart.items[targetIndex].total--;
     const removedCart = await userCart.save();
 
     const data = await removedCart.toJSON();
