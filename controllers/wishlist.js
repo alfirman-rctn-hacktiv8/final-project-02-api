@@ -2,11 +2,11 @@ const Wishlist = require("../models/wishlist");
 const useAuth = require("../lib/useAuth");
 
 exports.getWishlistItems = async (req, res) => {
+  const { error, claims } = useAuth(req.cookies?.jwt);
+
+  if (error) return res.status(error.status).json({ message: error.message });
+
   try {
-    const { error, claims } = useAuth(req.cookies?.jwt);
-
-    if (error) return res.status(error.status).json({ message: error.message });
-
     const userWishlist = await Wishlist.findOne({ uid: claims._id });
 
     res.status(200).json(userWishlist.items);
@@ -18,11 +18,11 @@ exports.getWishlistItems = async (req, res) => {
 exports.toggleWishlistItem = async (req, res) => {
   if (!req.body?.item) return res.status(400).json({ message: "bad request" });
 
+  const { error, claims } = useAuth(req.cookies?.jwt);
+
+  if (error) return res.status(error.status).json({ message: error.message });
+
   try {
-    const { error, claims } = useAuth(req.cookies?.jwt);
-
-    if (error) return res.status(error.status).json({ message: error.message });
-
     const userWishlist = await Wishlist.findOne({ uid: claims._id });
 
     const itemIndex = userWishlist.items.findIndex(

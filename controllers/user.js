@@ -2,11 +2,11 @@ const User = require("../models/user");
 const useAuth = require("../lib/useAuth");
 
 exports.getUser = async (req, res) => {
+  const { error, claims } = useAuth(req.cookies?.jwt);
+
+  if (error) return res.status(error.status).json({ message: error.message });
+
   try {
-    const { error, claims } = useAuth(req.cookies?.jwt);
-
-    if (error) return res.status(error.status).json({ message: error.message });
-
     const user = await User.findOne({ _id: claims._id });
 
     const { password, ...data } = await user.toJSON();
@@ -19,17 +19,18 @@ exports.getUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   const { name, address, number } = req.body;
+
   if (!name || !address || !number)
     return res.status(400).json({ message: "bad request" });
 
   if (!address.district || !address.city || !address.province)
     return res.status(400).json({ message: "bad request" });
 
+  const { error, claims } = useAuth(req.cookies?.jwt);
+
+  if (error) return res.status(error.status).json({ message: error.message });
+
   try {
-    const { error, claims } = useAuth(req.cookies?.jwt);
-
-    if (error) return res.status(error.status).json({ message: error.message });
-
     const user = await User.findOne({ _id: claims._id });
 
     user.name = name;

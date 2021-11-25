@@ -2,11 +2,11 @@ const Cart = require("../models/cart");
 const useAuth = require("../lib/useAuth");
 
 exports.getCartItems = async (req, res) => {
+  const { error, claims } = useAuth(req.cookies?.jwt);
+
+  if (error) return res.status(error.status).json({ message: error.message });
+
   try {
-    const { error, claims } = useAuth(req.cookies?.jwt);
-
-    if (error) return res.status(error.status).json({ message: error.message });
-
     const userCart = await Cart.findOne({ uid: claims._id });
 
     res.status(200).json(userCart.items);
@@ -18,11 +18,11 @@ exports.getCartItems = async (req, res) => {
 exports.addCartItem = async (req, res) => {
   if (!req.body.item) return res.status(400).json({ message: "bad request" });
 
+  const { error, claims } = useAuth(req.cookies?.jwt);
+
+  if (error) return res.status(error.status).json({ message: error.message });
+
   try {
-    const { error, claims } = useAuth(req.cookies?.jwt);
-
-    if (error) return res.status(error.status).json({ message: error.message });
-
     const userCart = await Cart.findOne({ uid: claims._id });
 
     const itemIndex = userCart.items.findIndex(
@@ -44,13 +44,14 @@ exports.addCartItem = async (req, res) => {
 };
 
 exports.removeCartItem = async (req, res) => {
-  if (!req.body.productId) return res.status(400).json({ message: "bad request" });
+  if (!req.body.productId)
+    return res.status(400).json({ message: "bad request" });
+
+  const { error, claims } = useAuth(req.cookies?.jwt);
+
+  if (error) return res.status(error.status).json({ message: error.message });
 
   try {
-    const { error, claims } = useAuth(req.cookies?.jwt);
-
-    if (error) return res.status(error.status).json({ message: error.message });
-
     const userCart = await Cart.findOne({ uid: claims._id });
 
     const targetIndex = userCart.items.findIndex(
@@ -63,6 +64,7 @@ exports.removeCartItem = async (req, res) => {
     userCart.items[targetIndex].total === 1
       ? userCart.items.splice(targetIndex, 1)
       : userCart.items[targetIndex].total--;
+
     const removedCart = await userCart.save();
 
     const data = await removedCart.toJSON();
