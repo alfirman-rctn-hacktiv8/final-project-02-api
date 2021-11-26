@@ -1,5 +1,5 @@
 const Cart = require("../models/cart");
-const useAuth = require("../lib/useAuth");
+const useAuth = require("../hooks/useAuth");
 
 exports.getCartItems = async (req, res) => {
   const { error, claims } = useAuth(req.cookies?.jwt);

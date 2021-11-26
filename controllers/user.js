@@ -1,5 +1,5 @@
 const User = require("../models/user");
-const useAuth = require("../lib/useAuth");
+const useAuth = require("../hooks/useAuth");
 
 exports.getUser = async (req, res) => {
   const { error, claims } = useAuth(req.cookies?.jwt);

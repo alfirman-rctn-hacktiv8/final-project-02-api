@@ -1,5 +1,5 @@
 const Wishlist = require("../models/wishlist");
-const useAuth = require("../lib/useAuth");
+const useAuth = require("../hooks/useAuth");
 
 exports.getWishlistItems = async (req, res) => {
   const { error, claims } = useAuth(req.cookies?.jwt);
