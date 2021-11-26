@@ -12,6 +12,8 @@ const adminOnly = async (req, res, next) => {
 
   const admin = await User.findById(claims._id);
 
+  if (!admin) return res.status(401).json({ message: "unauthenticated" });
+
   if (admin._id != process.env.ADMIN_ID)
     return res.status(403).json({ message: "forbidden" });
 

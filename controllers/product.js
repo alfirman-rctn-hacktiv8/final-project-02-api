@@ -1,19 +1,19 @@
 const Product = require("../models/product");
 
 exports.addProduct = async (req, res) => {
-  const { name, price, category, description, image } = req.body;
+  const { name, price, category, stock, description, image } = req.body;
 
-  if (!name || !price || !category)
+  if (!name || !price || !category ||!stock)
     return res.status(400).json({ message: "bad request" });
 
   const newProduct = new Product({
     name,
     price,
+    stock,
     category,
     image: image || "",
     description: description || "",
     rating: { rate: 0, count: 0 },
-    stock: 0,
   });
 
   try {
