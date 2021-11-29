@@ -3,10 +3,11 @@ const dotenv = require("dotenv");
 const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
+const user = require("./routes/user");
+const cart = require("./routes/cart");
 const wishlist = require("./routes/wishlist");
 const product = require("./routes/product");
-const cart = require("./routes/cart");
-const user = require("./routes/user");
+const income = require("./routes/income");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -19,6 +20,7 @@ app.use(express.json());
 
 app.use("/user", user);
 app.use("/cart", cart);
+app.use("/income", income);
 app.use("/product", product);
 app.use("/wishlist", wishlist);
 
