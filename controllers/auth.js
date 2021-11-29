@@ -26,7 +26,7 @@ exports.register = async (req, res) => {
     const result = await newUser.save();
 
     const { password, ...data } = await result.toJSON();
-    
+
     const userCart = new Cart({ uid: result._id, items: [] }); // cart
     const userWihslist = new Wishlist({ uid: result._id, items: [] }); // wishlist
 
@@ -53,7 +53,12 @@ exports.login = async (req, res) => {
 
     const token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY);
 
-    res.cookie("jwt", token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }); // 1 day
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: "none",
+      secure: true,
+    }); // 1 day
 
     res.status(200).json({ message: "success" });
   } catch (error) {
