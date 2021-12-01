@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 5000;
 dotenv.config();
 
 app.use(cookieParser());
-app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+app.use(cors({ credentials: true, origin: ["http://localhost:3000","https://codepen.io"] }));
 app.use(express.json());
 
 app.use("/user", user);
