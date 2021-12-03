@@ -67,7 +67,7 @@ exports.login = async (req, res) => {
 };
 
 exports.logout = (req, res) => {
-  res.cookie("jwt", "", { maxAge: 0 });
+  res.cookie("jwt", "", { maxAge: 0, sameSite: "none", secure: true });
 
   res.status(200).json({ message: "success" });
 };
