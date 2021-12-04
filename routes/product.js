@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const adminOnly = require("../middleware/adminOnly")
-const { addProduct, updateProduct, getProducts, getProduct, deleteProduct } = require("../controllers/product");
+const { addProduct, updateProduct, getProducts, getProduct, deleteProduct, getIncomeData } = require("../controllers/product");
 
 router.get("/", getProducts);
+router.get("/income", adminOnly, getIncomeData);
 router.get("/:productId", getProduct);
 router.post("/", adminOnly, addProduct);
 router.put("/:productId", adminOnly, updateProduct);

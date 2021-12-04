@@ -3,7 +3,7 @@ const Product = require("../models/product");
 exports.addProduct = async (req, res) => {
   const { name, price, category, stock, description, image, sold } = req.body;
 
-  if (!name || !price || !category ||!stock)
+  if (!name || !price || !category || !stock)
     return res.status(400).json({ message: "bad request" });
 
   const newProduct = new Product({
@@ -89,5 +89,25 @@ exports.deleteProduct = async (req, res) => {
     res.status(200).json({ message: "berhasil dihapus", data: deleted });
   } catch (e) {
     return res.status(500).json({ message: "something went wrong", error });
+  }
+};
+
+exports.getIncomeData = async (req, res) => {
+  try {
+    const data = await Product.find();
+    let filtered = data.filter((el) => el.sold);
+    let total = 0;
+
+    filtered.forEach((el) => {
+      el._doc.total = 0;
+      el._doc.total = el.price * el.sold;
+      total += el.price * el.sold;
+    });
+
+    const result = { total, items: filtered };
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: "something went wrong", error });
   }
 };
