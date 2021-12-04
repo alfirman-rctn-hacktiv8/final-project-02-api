@@ -3,10 +3,17 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const Cart = require("../models/cart");
 const Wishlist = require("../models/wishlist");
+const validateEmail = require("../utils/validateEmail");
 
 exports.register = async (req, res) => {
   if (!req.body.name || !req.body.password || !req.body.email)
     return res.status(400).json({ message: "bad request" });
+
+  if (!validateEmail(req.body.email))
+    return res.status(400).json({ message: "email not valid" });
+
+  if (req.body.password.length < 6)
+    return res.status(400).json({ message: "password too weak" });
 
   try {
     const userIsExist = await User.findOne({ email: req.body.email });
