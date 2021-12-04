@@ -1,7 +1,7 @@
 const Product = require("../models/product");
 
 exports.addProduct = async (req, res) => {
-  const { name, price, category, stock, description, image } = req.body;
+  const { name, price, category, stock, description, image, sold } = req.body;
 
   if (!name || !price || !category ||!stock)
     return res.status(400).json({ message: "bad request" });
@@ -11,6 +11,7 @@ exports.addProduct = async (req, res) => {
     price,
     stock,
     category,
+    sold,
     image: image || "",
     description: description || "",
     rating: { rate: 0, count: 0 },
@@ -52,7 +53,7 @@ exports.getProduct = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   const { productId } = req.params;
 
-  const { name, price, category, description, image, stock } = req.body;
+  const { name, price, category, description, image, stock, sold } = req.body;
 
   try {
     const product = await Product.findById(productId);
@@ -65,6 +66,7 @@ exports.updateProduct = async (req, res) => {
     product.description = description;
     product.image = image;
     product.stock = stock;
+    product.sold = sold;
 
     const result = await product.save();
 
