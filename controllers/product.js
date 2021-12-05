@@ -28,8 +28,12 @@ exports.addProduct = async (req, res) => {
 };
 
 exports.getProducts = async (req, res) => {
+  const filter = {};
+  
+  req.query.category && Object.assign(filter, { category: req.query.category });
+
   try {
-    const result = await Product.find();
+    const result = await Product.find({ ...filter });
 
     res.status(200).json(result);
   } catch (error) {
