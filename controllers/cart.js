@@ -30,8 +30,8 @@ exports.addCartItem = async (req, res) => {
     );
 
     itemIndex === -1
-      ? userCart.items.push({ ...req.body.item, total: 1 })
-      : userCart.items[itemIndex].total++;
+      ? userCart.items.push({ ...req.body.item, quantity: 1 })
+      : userCart.items[itemIndex].quantity++;
 
     const addedCart = await userCart.save();
 
@@ -61,9 +61,9 @@ exports.removeCartItem = async (req, res) => {
     if (targetIndex === -1)
       return res.status(404).json({ message: "item not found" });
 
-    userCart.items[targetIndex].total === 1
+    userCart.items[targetIndex].quantity === 1
       ? userCart.items.splice(targetIndex, 1)
-      : userCart.items[targetIndex].total--;
+      : userCart.items[targetIndex].quantity--;
 
     const removedCart = await userCart.save();
 
