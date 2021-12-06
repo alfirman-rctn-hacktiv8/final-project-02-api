@@ -4,7 +4,7 @@ const useAuth = require("../hooks/useAuth");
 exports.getUser = async (req, res) => {
   const { error, claims } = useAuth(req.cookies?.jwt);
 
-  if (error) return res.status(error.status).json({ message: error.message });
+  if (error) return res.status(error.status).json({ error: error.message });
 
   try {
     const user = await User.findOne({ _id: claims._id });
@@ -13,7 +13,7 @@ exports.getUser = async (req, res) => {
 
     res.status(200).json(data);
   } catch (e) {
-    return res.status(500).json({ message: "something went wrong", error });
+    return res.status(500).json({ error: "something went wrong", e });
   }
 };
 
@@ -21,14 +21,14 @@ exports.updateUser = async (req, res) => {
   const { name, address, number } = req.body;
 
   if (!name || !address || !number)
-    return res.status(400).json({ message: "bad request" });
+    return res.status(400).json({ error: "bad request" });
 
   if (!address.district || !address.city || !address.province)
-    return res.status(400).json({ message: "bad request" });
+    return res.status(400).json({ error: "bad request" });
 
   const { error, claims } = useAuth(req.cookies?.jwt);
 
-  if (error) return res.status(error.status).json({ message: error.message });
+  if (error) return res.status(error.status).json({ error: error.message });
 
   try {
     const user = await User.findOne({ _id: claims._id });
@@ -43,6 +43,6 @@ exports.updateUser = async (req, res) => {
 
     res.status(200).json(data);
   } catch (e) {
-    return res.status(500).json({ message: "something went wrong", error });
+    return res.status(500).json({ error: "something went wrong", e });
   }
 };

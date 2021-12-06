@@ -4,23 +4,23 @@ const useAuth = require("../hooks/useAuth");
 exports.getCartItems = async (req, res) => {
   const { error, claims } = useAuth(req.cookies?.jwt);
 
-  if (error) return res.status(error.status).json({ message: error.message });
+  if (error) return res.status(error.status).json({ error: error.message });
 
   try {
     const userCart = await Cart.findOne({ uid: claims._id });
 
     res.status(200).json(userCart.items);
-  } catch (error) {
-    return res.status(500).json({ message: "something went wrong", error });
+  } catch (e) {
+    return res.status(500).json({ error: "something went wrong", e });
   }
 };
 
 exports.addCartItem = async (req, res) => {
-  if (!req.body.item) return res.status(400).json({ message: "bad request" });
+  if (!req.body.item) return res.status(400).json({ error: "bad request" });
 
   const { error, claims } = useAuth(req.cookies?.jwt);
 
-  if (error) return res.status(error.status).json({ message: error.message });
+  if (error) return res.status(error.status).json({ error: error.message });
 
   try {
     const userCart = await Cart.findOne({ uid: claims._id });
@@ -38,18 +38,18 @@ exports.addCartItem = async (req, res) => {
     const data = await addedCart.toJSON();
 
     res.status(201).json(data.items);
-  } catch (error) {
-    return res.status(500).json({ message: "something went wrong", error });
+  } catch (e) {
+    return res.status(500).json({ error: "something went wrong", e });
   }
 };
 
 exports.removeCartItem = async (req, res) => {
   if (!req.body.productId)
-    return res.status(400).json({ message: "bad request" });
+    return res.status(400).json({ error: "bad request" });
 
   const { error, claims } = useAuth(req.cookies?.jwt);
 
-  if (error) return res.status(error.status).json({ message: error.message });
+  if (error) return res.status(error.status).json({ error: error.message });
 
   try {
     const userCart = await Cart.findOne({ uid: claims._id });
@@ -59,7 +59,7 @@ exports.removeCartItem = async (req, res) => {
     );
 
     if (targetIndex === -1)
-      return res.status(404).json({ message: "item not found" });
+      return res.status(404).json({ error: "item not found" });
 
     userCart.items[targetIndex].quantity === 1
       ? userCart.items.splice(targetIndex, 1)
@@ -70,7 +70,7 @@ exports.removeCartItem = async (req, res) => {
     const data = await removedCart.toJSON();
 
     res.status(200).json(data.items);
-  } catch (error) {
-    return res.status(500).json({ message: "something went wrong", error });
+  } catch (e) {
+    return res.status(500).json({ error: "something went wrong", e });
   }
 };

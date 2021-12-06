@@ -7,19 +7,19 @@ const validateEmail = require("../utils/validateEmail");
 
 exports.register = async (req, res) => {
   if (!req.body.name || !req.body.password || !req.body.email)
-    return res.status(400).json({ message: "bad request" });
+    return res.status(400).json({ error: "bad request" });
 
   if (!validateEmail(req.body.email))
-    return res.status(400).json({ message: "email not valid" });
+    return res.status(400).json({ error: "email not valid" });
 
   if (req.body.password.length < 6)
-    return res.status(400).json({ message: "password too weak" });
+    return res.status(400).json({ error: "password too weak" });
 
   try {
     const userIsExist = await User.findOne({ email: req.body.email });
 
     if (userIsExist)
-      return res.status(400).json({ message: "email already used" });
+      return res.status(400).json({ error: "email already used" });
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
@@ -41,22 +41,22 @@ exports.register = async (req, res) => {
     await userWihslist.save();
 
     res.status(201).json(data);
-  } catch (error) {
-    res.status(500).json({ message: "something went wrong", error });
+  } catch (e) {
+    res.status(500).json({ error: "something went wrong", e });
   }
 };
 
 exports.login = async (req, res) => {
   if (!req.body.email || !req.body.password)
-    return res.status(400).json({ message: "bad request" });
+    return res.status(400).json({ error: "bad request" });
 
   try {
     const user = await User.findOne({ email: req.body.email });
 
-    if (!user) return res.status(404).json({ message: "user not found" });
+    if (!user) return res.status(404).json({ error: "user not found" });
 
     if (!(await bcrypt.compare(req.body.password, user.password)))
-      return res.status(400).json({ message: "invalid credentials" });
+      return res.status(400).json({ error: "invalid credentials" });
 
     const token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY);
 
@@ -68,8 +68,8 @@ exports.login = async (req, res) => {
     }); // 1 day
 
     res.status(200).json({ message: "success" });
-  } catch (error) {
-    res.status(500).json({ message: "something went wrong", error });
+  } catch (e) {
+    res.status(500).json({ error: "something went wrong", e });
   }
 };
 

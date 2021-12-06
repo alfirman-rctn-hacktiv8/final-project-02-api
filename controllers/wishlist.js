@@ -4,23 +4,23 @@ const useAuth = require("../hooks/useAuth");
 exports.getWishlistItems = async (req, res) => {
   const { error, claims } = useAuth(req.cookies?.jwt);
 
-  if (error) return res.status(error.status).json({ message: error.message });
+  if (error) return res.status(error.status).json({ error: error.message });
 
   try {
     const userWishlist = await Wishlist.findOne({ uid: claims._id });
 
     res.status(200).json(userWishlist.items);
-  } catch (error) {
-    return res.status(500).json({ message: "something went wrong", error });
+  } catch (e) {
+    return res.status(500).json({ error: "something went wrong", e });
   }
 };
 
 exports.toggleWishlistItem = async (req, res) => {
-  if (!req.body?.item) return res.status(400).json({ message: "bad request" });
+  if (!req.body?.item) return res.status(400).json({ error: "bad request" });
 
   const { error, claims } = useAuth(req.cookies?.jwt);
 
-  if (error) return res.status(error.status).json({ message: error.message });
+  if (error) return res.status(error.status).json({ error: error.message });
 
   try {
     const userWishlist = await Wishlist.findOne({ uid: claims._id });
@@ -37,7 +37,7 @@ exports.toggleWishlistItem = async (req, res) => {
     const data = await updatedWishlist.toJSON();
 
     res.status(200).json(data.items);
-  } catch (error) {
-    return res.status(500).json({ message: "something went wrong", error });
+  } catch (e) {
+    return res.status(500).json({ error: "something went wrong", e });
   }
 };

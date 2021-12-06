@@ -5,7 +5,7 @@ exports.addProduct = async (req, res) => {
   const { name, price, category, stock, description, image, sold } = req.body;
 
   if (!name || !price || !category || !stock)
-    return res.status(400).json({ message: "bad request" });
+    return res.status(400).json({ error: "bad request" });
 
   const newProduct = new Product({
     name,
@@ -22,8 +22,8 @@ exports.addProduct = async (req, res) => {
     const result = await newProduct.save();
 
     res.status(201).json(result);
-  } catch (error) {
-    return res.status(500).json({ message: "something went wrong", error });
+  } catch (e) {
+    return res.status(500).json({ error: "something went wrong", e });
   }
 };
 
@@ -36,8 +36,8 @@ exports.getProducts = async (req, res) => {
     const result = await Product.find({ ...filter });
 
     res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json({ message: "something went wrong", error });
+  } catch (e) {
+    res.status(500).json({ error: "something went wrong", e });
   }
 };
 
@@ -47,11 +47,11 @@ exports.getProduct = async (req, res) => {
   try {
     const product = await Product.findById(productId);
 
-    if (!product) return res.status(404).json({ message: "product not found" });
+    if (!product) return res.status(404).json({ error: "product not found" });
 
     res.status(200).json(product);
-  } catch (error) {
-    res.status(500).json({ message: "something went wrong", error });
+  } catch (e) {
+    res.status(500).json({ error: "something went wrong", e });
   }
 };
 
@@ -63,7 +63,7 @@ exports.updateProduct = async (req, res) => {
   try {
     const product = await Product.findById(productId);
 
-    if (!product) return res.status(404).json({ message: "product not found" });
+    if (!product) return res.status(404).json({ error: "product not found" });
 
     product.name = name;
     product.price = price;
@@ -76,8 +76,8 @@ exports.updateProduct = async (req, res) => {
     const result = await product.save();
 
     res.status(200).json(result);
-  } catch (error) {
-    return res.status(500).json({ message: "something went wrong", error });
+  } catch (e) {
+    return res.status(500).json({ error: "something went wrong", e });
   }
 };
 
@@ -87,13 +87,13 @@ exports.deleteProduct = async (req, res) => {
   try {
     const product = await Product.findById(productId);
 
-    if (!product) return res.status(404).json({ message: "product not found" });
+    if (!product) return res.status(404).json({ error: "product not found" });
 
     const deleted = await Product.findOneAndDelete(productId);
 
     res.status(200).json({ message: "berhasil dihapus", data: deleted });
   } catch (e) {
-    return res.status(500).json({ message: "something went wrong", error });
+    return res.status(500).json({ error: "something went wrong", e });
   }
 };
 
@@ -112,18 +112,18 @@ exports.getIncomeData = async (req, res) => {
     const result = { total, items: filtered };
 
     res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json({ message: "something went wrong", error });
+  } catch (e) {
+    res.status(500).json({ error: "something went wrong", e });
   }
 };
 
 exports.checkout = async (req, res) => {
   if (!req.body.items?.length)
-    return res.status(400).json({ message: "bad request" });
+    return res.status(400).json({ error: "bad request" });
 
   const { error } = useAuth(req.cookies?.jwt);
 
-  if (error) return res.status(error.status).json({ message: error.message });
+  if (error) return res.status(error.status).json({ error: error.message });
 
   try {
     const products = await Promise.all(
@@ -138,7 +138,7 @@ exports.checkout = async (req, res) => {
     const saveProducts = await Promise.all(products.map((el) => el.save()));
 
     res.status(200).json({ message: "success checkout", data: saveProducts });
-  } catch (error) {
-    res.status(500).json({ message: "something went wrong", error });
+  } catch (e) {
+    res.status(500).json({ error: "something went wrong", e });
   }
 };
