@@ -29,14 +29,13 @@ exports.addCartItem = async (req, res) => {
       (el) => el.productId === req.body.item.productId
     );
 
-    if (itemIndex === -1) userCart.items.push({ ...req.body.item, quantity: 1 });
-    else {
-      userCart.items[itemIndex].name = req.body.item.name;
-      userCart.items[itemIndex].price = req.body.item.price;
-      userCart.items[itemIndex].image = req.body.item.image;
-      userCart.items[itemIndex].description = req.body.item.description;
-      userCart.items[itemIndex].category = req.body.item.category;
-      userCart.items[itemIndex].quantity++;
+    if (itemIndex === -1) {
+      userCart.items.push({ ...req.body.item, quantity: 1 });
+    } else {
+      userCart.items[itemIndex] = {
+        ...req.body.item,
+        quantity: userCart.items[itemIndex].quantity++,
+      };
     }
 
     const addedCart = await userCart.save();
