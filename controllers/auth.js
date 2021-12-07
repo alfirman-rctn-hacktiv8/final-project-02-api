@@ -63,8 +63,8 @@ exports.login = async (req, res) => {
     res.cookie("jwt", token, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
-   // sameSite: "none",   // if you run on development comment this line
-   // secure: true,       // if you run on development comment this line
+      sameSite: "none",   // if you run on development comment this line
+      secure: true,       // if you run on development comment this line
     }); // 1 day
 
     res.status(200).json({ message: "success" });
