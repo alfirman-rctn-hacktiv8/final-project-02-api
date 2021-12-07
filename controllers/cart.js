@@ -29,9 +29,15 @@ exports.addCartItem = async (req, res) => {
       (el) => el.productId === req.body.item.productId
     );
 
-    itemIndex === -1
-      ? userCart.items.push({ ...req.body.item, quantity: 1 })
-      : userCart.items[itemIndex].quantity++;
+    if (itemIndex === -1) userCart.items.push({ ...req.body.item, quantity: 1 });
+    else {
+      userCart.items[itemIndex].name = req.body.name;
+      userCart.items[itemIndex].price = req.body.price;
+      userCart.items[itemIndex].image = req.body.image;
+      userCart.items[itemIndex].description = req.body.description;
+      userCart.items[itemIndex].category = req.body.category;
+      userCart.items[itemIndex].quantity++;
+    }
 
     const addedCart = await userCart.save();
 
