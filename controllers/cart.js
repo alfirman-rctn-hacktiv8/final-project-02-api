@@ -31,11 +31,11 @@ exports.addCartItem = async (req, res) => {
 
     if (itemIndex === -1) userCart.items.push({ ...req.body.item, quantity: 1 });
     else {
-      userCart.items[itemIndex].name = req.body.name;
-      userCart.items[itemIndex].price = req.body.price;
-      userCart.items[itemIndex].image = req.body.image;
-      userCart.items[itemIndex].description = req.body.description;
-      userCart.items[itemIndex].category = req.body.category;
+      userCart.items[itemIndex].name = req.body.item.name;
+      userCart.items[itemIndex].price = req.body.item.price;
+      userCart.items[itemIndex].image = req.body.item.image;
+      userCart.items[itemIndex].description = req.body.item.description;
+      userCart.items[itemIndex].category = req.body.item.category;
       userCart.items[itemIndex].quantity++;
     }
 
