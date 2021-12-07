@@ -34,7 +34,7 @@ exports.addCartItem = async (req, res) => {
     } else {
       userCart.items[itemIndex] = {
         ...req.body.item,
-        quantity: userCart.items[itemIndex].quantity++,
+        quantity: userCart.items[itemIndex].quantity + 1,
       };
     }
 
