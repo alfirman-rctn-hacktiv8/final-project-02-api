@@ -1,4 +1,5 @@
 const Product = require("../models/product");
+const Cart = require("../models/cart");
 
 exports.addProduct = async (req, res) => {
   const { name, price, category, stock, description, image, sold } = req.body;
@@ -28,7 +29,7 @@ exports.addProduct = async (req, res) => {
 
 exports.getProducts = async (req, res) => {
   const filter = {};
-  
+
   req.query.category && Object.assign(filter, { category: req.query.category });
 
   try {
@@ -73,6 +74,35 @@ exports.updateProduct = async (req, res) => {
     product.sold = sold;
 
     const result = await product.save();
+
+    const userCarts = await Cart.find();
+
+    const targetId = [];
+
+    userCarts.forEach((el) => {
+      let found = el.items.find((e) => e.productId == result._id);
+      if (found) targetId.push(el._id);
+    });
+
+    const targetCarts = await Promise.all(
+      targetId.map((id) => Cart.findById(id))
+    );
+
+    targetCarts.forEach((el, idx) => {
+      el.items.forEach((e, i) => {
+        if (result._id == e.productId) {
+          targetCarts[idx].items[i].name = result.name;
+          targetCarts[idx].items[i].price = result.price;
+          targetCarts[idx].items[i].image = result.image;
+          targetCarts[idx].items[i].description = result.description;
+          targetCarts[idx].items[i].category = result.category;
+          targetCarts[idx].items[i].sold = result.sold;
+          targetCarts[idx].items[i].stock = result.stock;
+        }
+      });
+    });
+
+    await Promise.all(targetCarts.map((el) => el.save()));
 
     res.status(200).json(result);
   } catch (e) {
